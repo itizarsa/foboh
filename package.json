@@ -1,0 +1,26 @@
+{
+	"name": "foboh",
+	"version": "1.0.0",
+	"description": "Foboh pricing profile",
+	"author": "Arshath H",
+	"license": "MIT",
+	"main": "src/index.js",
+	"scripts": {
+		"test": "node --test"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/itizarsa/foboh.git"
+	},
+	"keywords": [
+		"foboh"
+	],
+	"bugs": {
+		"url": "https://github.com/itizarsa/foboh/issues"
+	},
+	"homepage": "https://github.com/itizarsa/foboh#readme",
+	"engines": {
+		"node": ">= 20.15.0",
+		"iojs": ">= 10.7.0"
+	}
+}
