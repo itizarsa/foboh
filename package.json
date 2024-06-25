@@ -8,6 +8,9 @@
 	"scripts": {
 		"test": "node --test"
 	},
+	"devDependencies": {
+		"prettier": "^3.3.2"
+	},
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/itizarsa/foboh.git"
