@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Hermes API Reference</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	</head>
+	<body>
+		<script id="api-reference" data-url="/api/openapi"></script>
+
+		<script>
+			const configuration = { theme: "default", hideDownloadButton: true }
+
+			const apiReference = document.getElementById("api-reference")
+
+			apiReference.dataset.configuration = JSON.stringify(configuration)
+		</script>
+
+		<script src="https://cdn.jsdelivr.net/npm/@scalar/api-reference"></script>
+	</body>
+</html>
