@@ -1,23 +1,53 @@
-import { PricingProfiles } from "../database/schema.js"
+import { PricingProfileProducts, PricingProfiles, Products } from "../database/schema.js"
 import { promiseWrapper } from "../common/utils.js"
 import { db } from "../database/database.js"
-import { eq } from "drizzle-orm"
+import { eq, inArray } from "drizzle-orm"
 
 const create = async ({ body }) => {
 	const { products, ...input } = body
 
-	const query = db.insert(PricingProfiles).values([input]).returning()
+	return await db.transaction(async tx => {
+		const profileQuery = tx.insert(PricingProfiles).values(input).returning()
 
-	const { result, error } = await promiseWrapper(query)
+		const { result: profiles, error: profileError } = await promiseWrapper(profileQuery)
 
-	if (error) {
-		if (error.code === "SQLITE_CONSTRAINT_UNIQUE")
-			return { status: 400, error: { message: error.message.replace("SqliteError: ") } }
+		if (profileError) {
+			if (profileError.code === "SQLITE_CONSTRAINT_UNIQUE")
+				return {
+					status: 400,
+					error: { message: profileError.message.replace("SqliteError: ") }
+				}
 
-		return { status: 500, error }
-	}
+			return { status: 500, error: profileError }
+		}
 
-	return { status: 201, data: result.at(0) }
+		const profile = profiles.at(0)
+
+		const productQuery = tx
+			.select({ id: Products.id })
+			.from(Products)
+			.where(inArray(Products.id, products))
+
+		const { result: productsResult, error: productError } = await promiseWrapper(productQuery)
+
+		if (profileError) return { status: 500, error: productError }
+
+		if (!productsResult.length)
+			return { status: 400, error: { message: "Atleast one valid product should be given." } }
+
+		const profileProducts = productsResult.map(product => ({
+			pricingProfileId: profile.id,
+			productId: product.id
+		}))
+
+		const profileProductsQuery = tx.insert(PricingProfileProducts).values(profileProducts)
+
+		const { error: ppError } = await promiseWrapper(profileProductsQuery)
+
+		if (ppError) return { status: 500, error: ppError }
+
+		return { status: 201, data: profile }
+	})
 }
 
 const read = async ({ params }) => {
