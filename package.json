@@ -41,7 +41,7 @@
 	},
 	"homepage": "https://github.com/itizarsa/foboh#readme",
 	"engines": {
-		"node": ">= 20.15.0",
-		"iojs": ">= 10.7.0"
+		"node": "20.15.0",
+		"iojs": "10.7.0"
 	}
 }
