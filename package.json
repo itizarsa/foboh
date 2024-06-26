@@ -12,6 +12,7 @@
 		"dev": "NODE_ENV=development node --watch .",
 		"db:generate": "drizzle-kit generate --config=src/database/drizzle.config.js",
 		"db:migrate": "drizzle-kit migrate --config=src/database/drizzle.config.js",
+		"db:seed": "node src/database/seed.js",
 		"db:studio": "drizzle-kit studio --config=src/database/drizzle.config.js"
 	},
 	"dependencies": {
