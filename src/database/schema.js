@@ -8,6 +8,7 @@ export const PricingProfiles = sqliteTable("pricing_profiles", {
 	isDefault: integer("is_default", { mode: "boolean" }).default(false),
 	expirationDate: text("expiration_date").notNull(),
 	adjustmentType: text("adjustment_type", { enum: ["FIXED", "DYNAMIC"] }).notNull(),
+	adjustmentMode: text("adjustment_mode", { enum: ["INCREASE", "DECREASE"] }).notNull(),
 	adjustmentValue: real("adjustment_value").notNull(),
 	createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
 	updatedAt: text("updated_at").default(sql`CURRENT_TIMESTAMP`)
