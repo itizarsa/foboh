@@ -1,3 +1,4 @@
+import { RequestValidationError, ResponseValidationError } from "./common/openapi.js"
 import { loggerMiddleware } from "./logger/logger.middleware.js"
 import { logger } from "./logger/logger.utils.js"
 import product from "./product/product.route.js"
@@ -26,7 +27,29 @@ app.all("*", (req, res) => {
 	return res.status(404).json({ message: `Cannot ${req.method} ${req.url}` })
 })
 
-app.use((err, req, res, next) => res.status(400).send({ message: err?.message }))
+app.use((err, req, res, next) => {
+	if (err instanceof RequestValidationError) {
+		const errorMessage = err.validationError.details.map(details => {
+			const { message, context } = details
+
+			const { key, value } = context
+
+			return { message, field: key, rejectedValue: value }
+		})
+
+		return res
+			.status(400)
+			.json({ message: "Validation failed", segment: err.segment, errors: errorMessage })
+	}
+
+	if (err instanceof ResponseValidationError) {
+		logger.error({ type: "ResponseValidationError", message: err.message, errors: err })
+
+		return res.status(500).json({ error: { message: "Server Error: Invalid Response Schema" } })
+	}
+
+	return res.status(400).send({ message: err?.message })
+})
 
 app.listen(port, () => logger.info(`App listening on ${port}`))
 

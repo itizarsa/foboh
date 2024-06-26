@@ -1,17 +1,17 @@
 import { create, read, update, remove } from "./product.service.js"
-import { validate } from "../validator/validator.middleware.js"
 import { productDto, idParamDto } from "./product.dto.js"
+import { validateRequest } from "../common/openapi.js"
 import { wrapper } from "../common/controller.js"
 import express from "express"
 
 const router = express.Router()
 
-router.post("/", validate(productDto, "body"), wrapper(create))
+router.post("/", validateRequest({ body: productDto }), wrapper(create))
 
-router.get("/:id", validate(idParamDto, "params"), wrapper(read))
+router.get("/:id", validateRequest({ params: idParamDto }), wrapper(read))
 
-router.put("/:id", validate(idParamDto, "params"), validate(productDto, "body"), wrapper(update))
+router.put("/:id", validateRequest({ params: idParamDto, body: productDto }), wrapper(update))
 
-router.delete("/:id", validate(idParamDto, "params"), wrapper(remove))
+router.delete("/:id", validateRequest({ params: idParamDto }), wrapper(remove))
 
 export default router
