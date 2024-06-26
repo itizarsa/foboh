@@ -6,4 +6,7 @@ const promiseWrapper = promise => {
 
 const round = num => parseFloat(num.toFixed(2))
 
-export { promiseWrapper, round }
+const capitilize = string =>
+	string.substring(0, 1).toUpperCase() + string.substring(1, string.length)
+
+export { promiseWrapper, round, capitilize }
