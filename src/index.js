@@ -1,4 +1,4 @@
-import { RequestValidationError, ResponseValidationError } from "./common/openapi.js"
+import { specification, RequestValidationError, ResponseValidationError } from "./common/openapi.js"
 import { loggerMiddleware } from "./logger/logger.middleware.js"
 import { logger } from "./logger/logger.utils.js"
 import product from "./product/product.route.js"
@@ -19,9 +19,13 @@ app.use(rTracer.expressMiddleware({ requestIdFactory: () => randomUUID() }))
 
 app.use(loggerMiddleware)
 
-app.use("/api/health", (req, res) => res.status(200).json({ message: "OK" }))
 app.use("/api/profile", profile)
+
 app.use("/api/product", product)
+
+app.get("/api/openapi", (req, res) => res.status(200).json(specification(app)))
+
+app.get("/api/health", (req, res) => res.status(200).json({ message: "OK" }))
 
 app.all("*", (req, res) => {
 	return res.status(404).json({ message: `Cannot ${req.method} ${req.url}` })
