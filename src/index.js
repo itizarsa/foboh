@@ -1,5 +1,7 @@
 import { loggerMiddleware } from "./logger/logger.middleware.js"
 import { logger } from "./logger/logger.utils.js"
+import product from "./product/product.route.js"
+import profile from "./profile/profile.route.js"
 import { randomUUID } from "crypto"
 import rTracer from "cls-rtracer"
 import express from "express"
@@ -15,6 +17,10 @@ app.use(express.urlencoded({ extended: true, limit: "10mb" }))
 app.use(rTracer.expressMiddleware({ requestIdFactory: () => randomUUID() }))
 
 app.use(loggerMiddleware)
+
+app.use("/api/health", (req, res) => res.status(200).json({ message: "OK" }))
+app.use("/api/profile", profile)
+app.use("/api/product", product)
 
 app.all("*", (req, res) => {
 	return res.status(404).json({ message: `Cannot ${req.method} ${req.url}` })
