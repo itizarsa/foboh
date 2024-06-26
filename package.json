@@ -9,12 +9,16 @@
 	"scripts": {
 		"test": "node --test",
 		"start": "node .",
-		"dev": "node --watch ."
+		"dev": "NODE_ENV=development node --watch ."
 	},
 	"dependencies": {
-		"express": "^4.19.2"
+		"cls-rtracer": "^2.6.3",
+		"express": "^4.19.2",
+		"node-cache": "^5.1.2",
+		"pino": "^9.2.0"
 	},
 	"devDependencies": {
+		"pino-pretty": "^11.2.1",
 		"prettier": "^3.3.2"
 	},
 	"repository": {
