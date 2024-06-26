@@ -1,5 +1,4 @@
 import { sqliteTable, text, integer, real } from "drizzle-orm/sqlite-core"
-import { sql } from "drizzle-orm"
 
 export const PricingProfiles = sqliteTable("pricing_profiles", {
 	id: integer("id").primaryKey({ autoIncrement: true }),
@@ -9,9 +8,7 @@ export const PricingProfiles = sqliteTable("pricing_profiles", {
 	expirationDate: text("expiration_date").notNull(),
 	adjustmentType: text("adjustment_type", { enum: ["FIXED", "DYNAMIC"] }).notNull(),
 	adjustmentMode: text("adjustment_mode", { enum: ["INCREASE", "DECREASE"] }).notNull(),
-	adjustmentValue: real("adjustment_value").notNull(),
-	createdAt: text("created_at").default(sql`CURRENT_TIMESTAMP`),
-	updatedAt: text("updated_at").default(sql`CURRENT_TIMESTAMP`)
+	adjustmentValue: real("adjustment_value").notNull()
 })
 
 export const Products = sqliteTable("products", {
