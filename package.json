@@ -20,6 +20,7 @@
 		"cls-rtracer": "^2.6.3",
 		"drizzle-orm": "^0.31.2",
 		"express": "^4.19.2",
+		"express-joi-openapi": "^0.7.0",
 		"joi": "^17.13.3",
 		"node-cache": "^5.1.2",
 		"pino": "^9.2.0"
