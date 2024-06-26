@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer, real } from "drizzle-orm/sqlite-core"
+import { sqliteTable, text, integer, real, primaryKey } from "drizzle-orm/sqlite-core"
 
 export const PricingProfiles = sqliteTable("pricing_profiles", {
 	id: integer("id").primaryKey({ autoIncrement: true }),
@@ -29,22 +29,5 @@ export const PricingProfileProducts = sqliteTable("pricing_profile_products", {
 		.references(() => PricingProfiles.id),
 	productId: integer("product_id")
 		.notNull()
-		.references(() => Products.id),
-	newPrice: real("new_price").notNull()
-})
-
-export const Customers = sqliteTable("customers", {
-	id: integer("id").primaryKey({ autoIncrement: true }),
-	name: text("name").notNull(),
-	email: text("email").notNull().unique()
-})
-
-export const PricingProfileCustomers = sqliteTable("pricing_profile_customers", {
-	id: integer("id").primaryKey({ autoIncrement: true }),
-	pricingProfileId: integer("pricing_profile_id")
-		.notNull()
-		.references(() => PricingProfiles.id),
-	customerId: integer("customer_id")
-		.notNull()
-		.references(() => Customers.id)
+		.references(() => Products.id)
 })
