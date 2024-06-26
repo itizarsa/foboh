@@ -25,6 +25,7 @@ const specification = app => {
 
 	delete json["paths"]["*"]
 	delete json["paths"]["/api/openapi"]
+	delete json["paths"]["/api/health"]
 
 	const paths = Object.entries(json.paths).reduce((paths, elem) => {
 		const [path, operations] = elem
