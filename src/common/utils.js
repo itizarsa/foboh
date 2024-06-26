@@ -4,4 +4,6 @@ const promiseWrapper = promise => {
 	})
 }
 
-export { promiseWrapper }
+const round = num => parseFloat(num.toFixed(2))
+
+export { promiseWrapper, round }
