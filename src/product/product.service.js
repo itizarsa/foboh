@@ -1,7 +1,7 @@
 import { promiseWrapper } from "../common/utils.js"
 import { Products } from "../database/schema.js"
 import { db } from "../database/database.js"
-import { eq } from "drizzle-orm"
+import { eq, inArray } from "drizzle-orm"
 
 const create = async ({ body }) => {
 	const query = db.insert(Products).values([body]).returning()
@@ -59,4 +59,12 @@ const remove = async ({ params }) => {
 	return { status: 204, data: {} }
 }
 
-export { create, read, update, remove }
+const findByIds = async ids => {
+	const query = db.select().from(Products).where(inArray(Products.id, ids))
+
+	const { error, result } = await promiseWrapper(query)
+
+	return [error, result]
+}
+
+export { create, read, update, remove, findByIds }
