@@ -1,7 +1,18 @@
 import { PricingProfileProducts, PricingProfiles, Products } from "../database/schema.js"
-import { promiseWrapper } from "../common/utils.js"
+import { promiseWrapper, round } from "../common/utils.js"
 import { db } from "../database/database.js"
 import { eq, inArray } from "drizzle-orm"
+
+const adjustPriceOperations = {
+	FIXED: {
+		INCREASE: (base, value) => base + value,
+		DECREASE: (base, value) => base - value
+	},
+	DYNAMIC: {
+		INCREASE: (base, value) => base + (base * value) / 100,
+		DECREASE: (base, value) => base - (base * value) / 100
+	}
+}
 
 const create = async ({ body }) => {
 	const { products, ...input } = body
@@ -51,23 +62,53 @@ const create = async ({ body }) => {
 }
 
 const read = async ({ params }) => {
-	const query = db
+	const profileQuery = db
 		.select()
 		.from(PricingProfiles)
 		.where(eq(PricingProfiles.id, params.id))
 		.limit(1)
 
-	const { result, error } = await promiseWrapper(query)
+	const { result: profiles, error: profileError } = await promiseWrapper(profileQuery)
 
-	if (error) return { status: 500, error }
+	if (profileError) return { status: 500, error: profileError }
 
-	if (!result.length)
+	if (!profiles.length)
 		return {
 			status: 404,
 			error: { message: `Pricing profiles with id ${params.id} not found` }
 		}
 
-	return { status: 200, data: result.at(0) }
+	const profile = profiles.at(0)
+
+	const productsQuery = db
+		.select({
+			id: Products.id,
+			title: Products.title,
+			sku: Products.sku,
+			brand: Products.brand,
+			category: Products.category,
+			subCategory: Products.subCategory,
+			segment: Products.segment,
+			basePrice: Products.basePrice
+		})
+		.from(PricingProfileProducts)
+		.where(eq(PricingProfileProducts.pricingProfileId, profile.id))
+		.leftJoin(Products, eq(PricingProfileProducts.productId, Products.id))
+
+	const { result: productsResult, error: ppError } = await promiseWrapper(productsQuery)
+
+	const operation = adjustPriceOperations[profile.adjustmentType][profile.adjustmentMode]
+
+	const products = productsResult.map(product => {
+		return {
+			...product,
+			adjustedprice: round(operation(product.basePrice, profile.adjustmentValue))
+		}
+	})
+
+	if (ppError) return { status: 500, error: ppError }
+
+	return { status: 200, data: { ...profile, products: products } }
 }
 
 const update = async ({ params, body }) => {
